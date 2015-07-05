@@ -20,7 +20,7 @@ namespace bof {
 
         void setVelocityProbability(const int velocity, const float probability);
         float getVelocityProbability(const int velocity);
-        
+
         std::map<int, float>::const_iterator begin();
         std::map<int, float>::const_iterator end();
         void toString();
@@ -37,13 +37,20 @@ namespace bof {
         VelocityDistribution xVelocityDistribution;
         VelocityDistribution yVelocityDistribution;
         float occupiedProbability;
-        
+
     private:
         void getAntecedents(std::set<Cell *>& antecedents, std::vector<std::vector<Cell> >& prevOccGrid);
+        void getPrediction(float& alphaO, float& alphaE, const int xVelocity, const int yVelocity, const std::set<Cell *>& antecedents, const std::vector<std::vector<Cell> >& prevOccGrid);
+        int isReachable(const int xVelocity, const int yVelocity, const Cell *cell);
 
     public:
         Cell(VelocityDistribution xVelocityDistribution, VelocityDistribution yVelocityDistribution, const float occupiedProbability, const int xpos, const int ypos);
+        int getXPos() const;
+        int getYPos() const;
+        int getOccupiedProbability() const;
 
+        float getProbabilityOfXVelocity(const int xVelocity);
+        float getProbabilityOfYVelocity(const int yVelocity);
         void updateDistributions(std::vector<std::vector<Cell> >& prevOccGrid);
         void toString();
     };
