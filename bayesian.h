@@ -41,6 +41,9 @@ namespace bof {
     private:
         void getAntecedents(std::set<Cell *>& antecedents, std::vector<std::vector<Cell> >& prevOccGrid);
         void getPrediction(float& alphaO, float& alphaE, const int xVelocity, const int yVelocity, const std::set<Cell *>& antecedents, const std::vector<std::vector<Cell> >& prevOccGrid);
+        void getEstimation(std::vector<std::vector<float> >& alphaOccMatrix, std::vector<std::vector<float> >& alphaEmpMatrix, const float lvkSum);
+        float getNewOccupiedProbability(const std::vector<std::vector<float> >& alphaOccMatrix);
+        void updateVelocityProbabilities(const std::vector<std::vector<float> >& alphaOccMatrix, const std::vector<std::vector<float> >& alphaEmpMatrix, const std::vector<int>& xVelocityKeys, const std::vector<int>& yVelocityKeys);
         int isReachable(const int xVelocity, const int yVelocity, const Cell *cell);
 
     public:

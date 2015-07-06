@@ -53,6 +53,7 @@ namespace bof {
 
     void VelocityDistribution::toString() {
         printMap(velocityDist);
+        std::cout << std::endl;
     }
 
     /* Cell - function definitions */
@@ -88,6 +89,53 @@ namespace bof {
                     cell->getProbabilityOfXVelocity(xVelocity) * cell->getProbabilityOfYVelocity(yVelocity) * // P(V|A)
                     isReachable(xVelocity, yVelocity, cell) * // P(C|V,A)
                     (1.0 - cell->getOccupiedProbability()); // P(emp^-1|A)
+        }
+    }
+
+    void Cell::getEstimation(std::vector<std::vector<float> >& alphaOccMatrix, std::vector<std::vector<float> >& alphaEmpMatrix, const float lvkSum) {
+        assert(alphaOccMatrix.size() != 0 && alphaEmpMatrix.size() != 0 && alphaOccMatrix.size() == alphaEmpMatrix.size());
+        assert(alphaOccMatrix[0].size() != 0 && alphaEmpMatrix[0].size() != 0);
+        for (int i = 0; i < alphaOccMatrix.size(); ++i) {
+            for (int j = 0; j < alphaOccMatrix[i].size(); ++j) {
+                alphaOccMatrix[i][j] /= lvkSum;
+                alphaEmpMatrix[i][j] /= lvkSum;
+            }
+        }
+    }
+
+    float Cell::getNewOccupiedProbability(const std::vector<std::vector<float> >& alphaOccMatrix) {
+        assert(alphaOccMatrix.size() != 0 && alphaOccMatrix[0].size() != 0);
+
+        float sum = 0;
+        for (int i = 0; i < alphaOccMatrix.size(); ++i) {
+            for (int j = 0; j < alphaOccMatrix[i].size(); ++j) {
+                sum += alphaOccMatrix[i][j];
+            }
+        }
+
+        return sum;
+    }
+
+    void Cell::updateVelocityProbabilities(const std::vector<std::vector<float> >& alphaOccMatrix, const std::vector<std::vector<float> >& alphaEmpMatrix, const std::vector<int>& xVelocityKeys, const std::vector<int>& yVelocityKeys) {
+        assert(alphaOccMatrix.size() != 0 && alphaEmpMatrix.size() != 0 && alphaOccMatrix.size() == alphaEmpMatrix.size());
+        assert(alphaOccMatrix[0].size() != 0 && alphaEmpMatrix[0].size() != 0);
+        assert(xVelocityKeys.size() == alphaOccMatrix.size());
+        assert(yVelocityKeys.size() != 0);
+
+        for (int i = 0; i < alphaOccMatrix.size(); ++i) {
+            float newXVelocityProbability = 0;
+            for (int j = 0; j < alphaOccMatrix[i].size(); ++j) {
+                newXVelocityProbability += alphaOccMatrix[i][j] + alphaEmpMatrix[i][j];
+            }
+            xVelocityDistribution.setVelocityProbability(xVelocityKeys[i], newXVelocityProbability);
+        }
+
+        for (int i = 0; i < alphaOccMatrix[0].size(); ++i) {
+            float newYVelocityProbability = 0;
+            for (int j = 0; j < alphaOccMatrix.size(); ++j) {
+                newYVelocityProbability += alphaOccMatrix[j][i] + alphaEmpMatrix[j][i];
+            }
+            yVelocityDistribution.setVelocityProbability(yVelocityKeys[i], newYVelocityProbability);
         }
     }
 
@@ -162,6 +210,12 @@ namespace bof {
             alphaEmpMatrix.push_back(alphaEmpRow);
             yVelocityKeysUpdated = true;
         }
+
+        assert(lvkSum != 0);
+
+        getEstimation(alphaOccMatrix, alphaEmpMatrix, lvkSum);
+        occupiedProbability = getNewOccupiedProbability(alphaOccMatrix);
+        updateVelocityProbabilities(alphaOccMatrix, alphaEmpMatrix, xVelocityKeys, yVelocityKeys);
     }
 
     void Cell::toString() {
