@@ -16,7 +16,7 @@ namespace bof {
     public:
         VelocityDistribution();
         VelocityDistribution(std::map<int, float> velocityDist);
-        VelocityDistribution(const int beginVelocity, const int numElems, const int stride);
+        VelocityDistribution(const int beginVelocity, const int numElems, const int stride, const int initialVelocity);
 
         void setVelocityProbability(const int velocity, const float probability);
         float getVelocityProbability(const int velocity);
@@ -48,6 +48,7 @@ namespace bof {
 
     public:
         Cell(VelocityDistribution xVelocityDistribution, VelocityDistribution yVelocityDistribution, const float occupiedProbability, const int xpos, const int ypos);
+        void setOccupiedProbability(const float occupiedProbability);
         int getXPos() const;
         int getYPos() const;
         int getOccupiedProbability() const;

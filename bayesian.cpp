@@ -15,7 +15,7 @@ namespace bof {
         this->velocityDist = velocityDist;
     }
 
-    VelocityDistribution::VelocityDistribution(const int beginVelocity, const int numElems, const int stride) {
+    VelocityDistribution::VelocityDistribution(const int beginVelocity, const int numElems, const int stride, const int initialVelocity) {
         velocityDist.clear();
         for (int i = 0, velocity = beginVelocity; i < numElems; ++i) {
             velocityDist[velocity] = 0;
@@ -23,6 +23,9 @@ namespace bof {
         }
 
         assert(velocityDist.size() == numElems);
+        assert(velocityDist.find(initialVelocity) != velocityDist.end());
+
+        velocityDist[initialVelocity] = 1;
     }
 
     void VelocityDistribution::setVelocityProbability(const int velocity, const float probability) {
@@ -67,7 +70,7 @@ namespace bof {
 
                 if (x >= 0 && x < prevOccGrid.size()) {
                     if (y >= 0 && y < prevOccGrid[x].size()) {
-                        antecedents.insert(&prevOccGrid[x][y]);
+                        antecedents.insert(&prevOccGrid[x][y]); // TODO: check
                     }
                 }
             }
@@ -157,6 +160,10 @@ namespace bof {
         this->occupiedProbability = occupiedProbability;
     }
 
+    void Cell::setOccupiedProbability(const float occupiedProbability) {
+        this->occupiedProbability = occupiedProbability;
+    }
+
     int Cell::getXPos() const {
         return xpos;
     }
@@ -213,14 +220,24 @@ namespace bof {
 
         assert(lvkSum != 0);
 
-        getEstimation(alphaOccMatrix, alphaEmpMatrix, lvkSum);
-        occupiedProbability = getNewOccupiedProbability(alphaOccMatrix);
-        updateVelocityProbabilities(alphaOccMatrix, alphaEmpMatrix, xVelocityKeys, yVelocityKeys);
+        if (lvkSum != 0) {
+            getEstimation(alphaOccMatrix, alphaEmpMatrix, lvkSum);
+            occupiedProbability = getNewOccupiedProbability(alphaOccMatrix);
+            updateVelocityProbabilities(alphaOccMatrix, alphaEmpMatrix, xVelocityKeys, yVelocityKeys);
+        } else {
+            occupiedProbability = 0;
+            bof::VelocityDistribution xVelDist(-6, 7, 2, 0);
+
+            bof::VelocityDistribution yVelDist(-6, 7, 2, 0);
+
+            xVelocityDistribution = xVelDist;
+            yVelocityDistribution = yVelDist;
+        }
     }
 
     void Cell::toString() {
+        std::cout << "Occupied Probability: " << occupiedProbability << std::endl;
         xVelocityDistribution.toString();
         yVelocityDistribution.toString();
-        std::cout << "Occupied Probability: " << occupiedProbability << std::endl;
     }
 }

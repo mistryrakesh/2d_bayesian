@@ -7,7 +7,7 @@ void printMap(const std::map<int, float>& intFloatMap) {
     for (std::map<int, float>::const_iterator it = intFloatMap.begin(); it != intFloatMap.end(); ++it) {
         if (it != intFloatMap.begin())
             std::cout << ", ";
-        std::cout << it->first << ": " << it->second << std::endl;
+        std::cout << it->first << ": " << it->second;
     }
     std::cout << "}";
 }
