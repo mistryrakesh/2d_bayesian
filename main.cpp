@@ -9,8 +9,7 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-    bof::VelocityDistribution xVelDist(-6, 7, 2, 0);
-
+    bof::VelocityDistribution xVelDist(-6, 7, 2, -2);
     bof::VelocityDistribution yVelDist(-6, 7, 2, 0);
 
     /* Initialize occupancy grid */
@@ -18,16 +17,14 @@ int main(int argc, char **argv) {
     for (int y = 0; y < GRIDROWS; ++y) {
         vector<bof::Cell> occRow;
         for (int x = 0; x < GRIDCOLS; ++x) {
-            bof::Cell cell(xVelDist, yVelDist, 0, x, y);
+            int occupancy = 0;
+            if (x == y)
+                occupancy = 1;
+            bof::Cell cell(xVelDist, yVelDist, occupancy, x, y);
             occRow.push_back(cell);
         }
         occGrid.push_back(occRow);
     }
-
-    occGrid[5][2].setOccupiedProbability(1);
-//    occGrid[5][3].setOccupiedProbability(1);
-//    occGrid[5][4].setOccupiedProbability(1);
-//    occGrid[5][5].setOccupiedProbability(1);
 
     /* Update occupancy grid */
     vector<vector<bof::Cell> > prevOccGrid = occGrid;

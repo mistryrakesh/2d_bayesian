@@ -68,9 +68,9 @@ namespace bof {
                 int x = round(xpos + xit->first * dt);
                 int y = round(ypos + yit->first * dt);
 
-                if (x >= 0 && x < prevOccGrid.size()) {
-                    if (y >= 0 && y < prevOccGrid[x].size()) {
-                        antecedents.insert(&prevOccGrid[x][y]); // TODO: check
+                if (y >= 0 && y < prevOccGrid.size()) {
+                    if (x >= 0 && x < prevOccGrid[y].size()) {
+                        antecedents.insert(&prevOccGrid[y][x]); // TODO: check
                     }
                 }
             }
@@ -218,7 +218,7 @@ namespace bof {
             yVelocityKeysUpdated = true;
         }
 
-        assert(lvkSum != 0);
+        // assert(lvkSum != 0);
 
         if (lvkSum != 0) {
             getEstimation(alphaOccMatrix, alphaEmpMatrix, lvkSum);
@@ -237,7 +237,7 @@ namespace bof {
 
     void Cell::toString() {
         std::cout << "Occupied Probability: " << occupiedProbability << std::endl;
-        xVelocityDistribution.toString();
-        yVelocityDistribution.toString();
+//        xVelocityDistribution.toString();
+//        yVelocityDistribution.toString();
     }
 }
