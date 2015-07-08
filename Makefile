@@ -1,7 +1,8 @@
-CXXFLAGS=-g
+CXXFLAGS=-g -O3
+OPENCVFLAGS=`pkg-config opencv --cflags --libs`
 
 main: main.o bayesian.o utils.o
-	g++ $(CXXFLAGS) main.o bayesian.o utils.o -o main
+	g++ $(CXXFLAGS) main.o bayesian.o utils.o -o main $(OPENCVFLAGS)
 
 main.o: main.cpp bayesian.h
 	g++ -c $(CXXFLAGS) main.cpp -o main.o
