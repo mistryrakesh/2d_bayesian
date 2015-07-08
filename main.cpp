@@ -7,8 +7,8 @@
 
 #include "bayesian.h"
 
-#define GRIDROWS 100
-#define GRIDCOLS 100
+#define GRIDROWS 25
+#define GRIDCOLS 25
 
 using namespace std;
 using namespace cv;
@@ -25,9 +25,11 @@ void displayOccupancyGrid(vector<vector<bof::Cell> >& occGrid) {
         }
     }
 
-    while (waitKey(30) != 27) { // wait for ESC key press
-        imshow("occupancyGrid", mapImg);
-    }
+    //    while (waitKey(30) != 27) { // wait for ESC key press
+    //        imshow("occupancyGrid", mapImg);
+    //    }
+    waitKey(1);
+    imshow("occupancyGrid", mapImg);
 }
 
 int main(int argc, char **argv) {
@@ -51,18 +53,20 @@ int main(int argc, char **argv) {
         occGrid.push_back(occRow);
     }
 
-    /* Update occupancy grid */
-    vector<vector<bof::Cell> > prevOccGrid = occGrid;
+    for (int k = 0; k < 25; ++k) {
+        /* Update occupancy grid */
+        vector<vector<bof::Cell> > prevOccGrid = occGrid;
 
-    for (int i = 0; i < GRIDROWS; ++i) {
-        for (int j = 0; j < GRIDCOLS; ++j) {
-            occGrid[i][j].updateDistributions(prevOccGrid);
-            // cout << "[" << i << "][" << j << "]: ";
-            // occGrid[i][j].toString();
+        for (int i = 0; i < GRIDROWS; ++i) {
+            for (int j = 0; j < GRIDCOLS; ++j) {
+                occGrid[i][j].updateDistributions(prevOccGrid);
+                // cout << "[" << i << "][" << j << "]: ";
+                // occGrid[i][j].toString();
+            }
         }
-    }
 
-    displayOccupancyGrid(occGrid);
+        displayOccupancyGrid(occGrid);
+    }
 
     return 0;
 }
